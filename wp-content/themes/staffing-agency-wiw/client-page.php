@@ -12,9 +12,9 @@ if(!is_user_logged_in()) {
 get_header();
 $user = wp_get_current_user();
 //Call function from When I Work API Plugin to Update Calendar Shifts
-if ( is_page( 'dashboard' ) && function_exists( 'updateDeletedNewCalendarShifts') ) { 
-    updateDeletedNewCalendarShifts();
-}
+//if ( is_page( 'dashboard' ) && function_exists( 'updateDeletedNewCalendarShifts') ) {
+//    updateDeletedNewCalendarShifts();
+//}
 
 ?>
 <div id="meta-page">

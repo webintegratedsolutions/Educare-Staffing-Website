@@ -12,9 +12,9 @@ if ( !current_user_can( 'manage_options' ) ) {
 get_header();
 $user = wp_get_current_user();
 //Call function from When I Work API Plugin to Update Calendar Shifts
-if ( is_page( 'administrator' ) || is_page( 'administration' ) && function_exists( 'updateDeletedNewCalendarShifts') ) { 
-    updateDeletedNewCalendarShifts();
-}
+//if ( is_page( 'administrator' ) || is_page( 'administration' ) && function_exists( 'updateDeletedNewCalendarShifts') ) {
+//    updateDeletedNewCalendarShifts();
+//}
 
 ?>
 <div id="meta-page">
