@@ -27,7 +27,7 @@ global $adminMsg;
 
 $url = get_current_url();
 
-if ( strpos($url, '/administration/') !== false || strpos($url, '/dashboard/') !== false || strpos($url, '/test-page/') !== false || strpos($url, '/email-confirmations/') !== false  || strpos($url, '/my-shifts/') !== false) { 
+if ( strpos($url, '/administration/') !== false || strpos($url, '/dashboard/') !== false || strpos($url, '/test-page/') !== false || strpos($url, '/email-confirmations/') !== false  || strpos($url, '/my-shifts/') !== false) {
 
 	require("wheniwork-config.php");
 	$wiw = new Wheniwork($myLoginToken);
@@ -62,16 +62,19 @@ function updateDeletedNewCalendarShifts() {
 	$calendar_shift_ids = getCalendarShiftIds();
 
 	//Get When I Work API Shift ID's
-	$wiw_shift_ids = getlistingShiftIDs($listingShiftsResult); 
+	$wiw_shift_ids = getlistingShiftIDs($listingShiftsResult);
 	print_r($wiw_shift_ids);
 
 	$adminMsg .= "<h4>API Shift Result</h4>\n";
 	$adminMsg .= "When I Work Listing Shift - Total Count: <strong>" . count($listingShiftsResult->shifts) . "</strong><hr /><br />\n";
 
+
+	$adminMsg .= "When I Work Listing Shifts: <strong>" . count($listingShiftsResult->shifts) . "</strong><hr /><br />\n";
+
 	$adminMsg .=  "<h4>Current Calendar Shifts</h4>";
 	$adminMsg .=  "Calendar Shift IDs - Total Count: <strong>" . count($calendar_shift_ids) . "</strong><hr /><br />\n";
-	
-	//Remove Deleted Shifts
+
+	/*Remove Deleted Shifts
 	$adminMsg .= "<h4>Remove Deleted Calendar Shifts</h4><hr />";
 	$shiftDelCount = removeCalendarShifts($wiw_shift_ids, $calendar_shift_ids);
 
@@ -88,7 +91,7 @@ function updateDeletedNewCalendarShifts() {
 	//Remove Deleted Shifts
 	$adminMsg .= "<hr /><h4>Remove Updated Calendar Shifts</h4><hr />";
 	$updatedShiftDelCount = removeUpdatedCalendarShifts($listingShiftsResult, $calendar_shift_ids);
-	
+
 	if($updatedShiftDelCount){
 		$adminMsg .= "<strong>" . $updatedShiftDelCount . " updated shifts were removed from the calendar.</strong><hr />\n";
 		$calendar_shift_ids = getCalendarShiftIds();
@@ -124,12 +127,10 @@ function updateDeletedNewCalendarShifts() {
 		$adminMsg .= "<hr /><p><strong>The client calendars are all up-to-date.</strong></p><hr />\n";
 	}
 
-	//echo $adminMsg;
-
 	//Send Admin Calendar Update Report to Webmaster by Email
-	$adminMsg .= sendAdminCalendarUpdateReport($adminMsg);
+	//$adminMsg .= sendAdminCalendarUpdateReport($adminMsg);
 
-	//echo $adminMsg;
+	*/
 
 	//Add shortcode to be used on When I Work Admin Dashboard
 	add_shortcode( 'wiw_dashboard', function(){ global $adminMsg; return $adminMsg; });
@@ -137,7 +138,7 @@ function updateDeletedNewCalendarShifts() {
 	//sendClientConfirmationEmails();
 
 }
-add_action( 'wiw_cron_action', 'updateDeletedNewCalendarShifts' );
+//add_action( 'wiw_cron_action', 'updateDeletedNewCalendarShifts' );
 
 
 /************************************************************************
@@ -189,7 +190,7 @@ function sendClientConfirmationEmails() {
 					)
 				)
 			);
-			 
+
 			$client_arr = get_users($args);
 			$client_email = $client_arr[0]->user_email;
 			$shift_id = get_post_meta($post_shift_id, 'Shift ID')[0];
@@ -246,14 +247,14 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
     $headers .= 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1';
     $confirmation_email_to = $to = "webmaster@educarestaffing.com";
-  
+
     //PDF File Attachment
     $attachment = "/home/www/educarestaffing.com/wp-content/employee_profiles/Personal File - " . $employee_name . ".pdf";
 
     if (file_exists($attachment)){
         //set message for confirmation email
         $confirmation_message = "Hello,<br /><br />" . $employee_name . " will cover the above mentioned shift. The employee's personal file is attached for your consideration.<br /><br />Best Regards,<br />Educare Staffing Services";
-        if (wp_mail($to, $subject, $confirmation_message, $headers, $attachment)) {	
+        if (wp_mail($to, $subject, $confirmation_message, $headers, $attachment)) {
             http_response_code(200);
             update_post_meta($shift_post_id,'Confirmation Email', "1");
             $adminMsg .= "Confirmation email successfully sent for shift ID: " . $shift_id . "\n";
@@ -277,7 +278,7 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
     }
 
 	return $adminMsg;
-  
+
 }
 
 
@@ -293,10 +294,10 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 // // Fetch data from When I Work API
 // function fetch_when_i_work_data() {
 
-	
+
 // 	//include When I Work API Class
 // 	require("wheniwork.php");
-	
+
 // 	//call to When I Work API login function
 // 	$loginResult = Wheniwork::login(
 // 	"d3edc80bffb2c0299b92a1a4a2fef7422d47c325",
@@ -305,8 +306,8 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 // 	);
 // 	//request When I Work shift
 // 	$myLoginToken = $loginResult->login->{'token'};
-	
-	
+
+
 //     $api_url = 'https://api.wheniwork.com/2/shifts?start=2024-01-01&end=2025-12-31'; // Example endpoint
 //     $api_key = 'd3edc80bffb2c0299b92a1a4a2fef7422d47c325'; // Replace with your actual API key
 
@@ -325,7 +326,7 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 //             'Accept' => 'application/json',
 //         ],
 //     ]);
-    
+
 
 //     if (is_wp_error($response)) {
 //     echo 'EMPTY';
@@ -341,21 +342,21 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 // function get_or_create_venue() {
 //         // Create or get a default venue
 //         $venue_id = get_option('wiw_default_venue_id');
-        
+
 //         if (!$venue_id) {
 //             $venue_data = array(
 //                 'post_title'    => 'Default Venue',
 //                 'post_type'     => 'tribe_venue',
 //                 'post_status'   => 'publish'
 //             );
-            
+
 //             $venue_id = wp_insert_post($venue_data);
 //             update_option('wiw_default_venue_id', $venue_id);
 //         }
-        
+
 //         return '95769';
 //     }
-    
+
 //     function find_existing_event($shift_id) {
 
 //         $args = array(
@@ -366,17 +367,17 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 //         );
 
 //         $query = new WP_Query($args);
-        
-       
+
+
 //         if ($query->have_posts()) {
 //             return true;
 //         }
 
 //         return false;
 //     }
-    
-    
-    
+
+
+
 //     function clear_all_caches($event_id) {
 //     // Clear The Events Calendar cache
 
@@ -390,8 +391,8 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 //     // Clear all transients related to The Events Calendar
 //     global $wpdb;
 //     $wpdb->query(
-//         "DELETE FROM $wpdb->options 
-//         WHERE option_name LIKE '%tribe_events%' 
+//         "DELETE FROM $wpdb->options
+//         WHERE option_name LIKE '%tribe_events%'
 //         AND option_name LIKE '%transient%'"
 //     );
 
@@ -404,7 +405,7 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 
 //     // Force calendar update
 //     delete_transient('tribe_events_calendar_update_key');
-    
+
 //     // Clear Tribe's cache for the month
 //     $date = new DateTime($shift['start_time']);
 //     $month_key = $date->format('Y-m');
@@ -412,7 +413,7 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 
 //     // Trigger an action that The Events Calendar can hook into
 //     do_action('tribe_events_after_event_save', $event_id);
-    
+
 //         wp_remote_get(get_site_url() . '/events/month/', array('timeout' => 0.01));
 //     wp_remote_get(get_site_url() . '/events/list/', array('timeout' => 0.01));
 //         wp_remote_get(get_site_url() . '/my-calendar', array('timeout' => 0.01));
@@ -423,7 +424,7 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 //     define('WP_DEBUG', true);
 // define('WP_DEBUG_LOG', true);
 //     if (!is_admin()) return;
-    
+
 //     $args = array(
 //             'post_type' => 'tribe_events',
 //                         'meta_key' => 'wiw_shift_id',
@@ -432,12 +433,12 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 //         );
 
 //         $query = new WP_Query($args);
-        
-       
+
+
 //         if ($query->have_posts()) {
 
 //     $schedules = fetch_when_i_work_data();
-    
+
 //    // echo 'SCHEDULES:'.$schedules;
 
 //     if (empty($schedules)) {
@@ -449,7 +450,7 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 
 //     foreach ($schedules as $schedule) {
 //         echo "Processing schedule: " . $schedule['position']['name'] . "<br>";
-        
+
 //          $event_data = array(
 //             'post_title'    => $schedule['position']['name'] . ' Shift',
 //             'post_content'  => $schedule['notes'],

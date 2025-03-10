@@ -3,7 +3,7 @@
 /* The template for displaying all site admin pages
  *
  * This is the template that displays all pages by default.
- * 
+ *
  * @package staffing-agency-wiw
  */
 if ( !current_user_can( 'manage_options' ) ) {
@@ -11,11 +11,11 @@ if ( !current_user_can( 'manage_options' ) ) {
 }
 get_header();
 $user = wp_get_current_user();
-//Call function from When I Work API Plugin to Update Calendar Shifts
-//if ( is_page( 'administrator' ) || is_page( 'administration' ) && function_exists( 'updateDeletedNewCalendarShifts') ) {
-//    updateDeletedNewCalendarShifts();
-//}
-
+/*Call function from When I Work API Plugin to Update Calendar Shifts
+if ( is_page( 'administrator' ) || is_page( 'administration' ) && function_exists( 'updateDeletedNewCalendarShifts') ) {
+    updateDeletedNewCalendarShifts();
+}
+*/
 ?>
 <div id="meta-page">
     <div class="container">

