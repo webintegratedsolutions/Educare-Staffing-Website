@@ -74,6 +74,8 @@ function removeCalendarShift($post_shift_id){
 
 function addCalendarShift($shift_record, $employee_record){
 
+	$shiftAddedMsg = "";
+
 	$shift_id = $shift_record->id;	
 	$shift_notes = $shift_record->notes;
 	$shift_room = "";
@@ -126,12 +128,10 @@ function addCalendarShift($shift_record, $employee_record){
 	$shift_acknowledged = $shift_record->acknowledged;
 	$shift_acknowledged_at = $shift_record->acknowledged_at;
 	$shift_site_id = $shift_record->site_id;
-	$post_categories= array("cid_" . $shift_site_id);	
 	$category_id = get_term_by('name', "cid_" . $shift_site_id, 'tribe_events_cat');
 	$client_sid = $category_id->term_id;
 
-	$shiftAddedMsg = "";
-	$shiftAddedMsg .= "<strong>Shift Date: " . $shift_date . " - " . $shift_title . "<br /></strong>\n";
+	$shiftAddedMsg .= "Shift Date: " . $shift_date . " - " . $shift_title . "<br />\n";
 	$shiftAddedMsg .= "Employee Name: " . $employee_name . "<br />\n"; 
 	$shiftAddedMsg .= "Room: " . $shift_room . "<br />\n";
 	$shiftAddedMsg .= "Position: " . $shift_position . "<br />\n";
@@ -153,6 +153,7 @@ function addCalendarShift($shift_record, $employee_record){
 	//echo "Employee Phone: " . $employee_record["phone_number"] . "<br />\n";
 	$shiftAddedMsg .= "Shift ID: " . $shift_id . "<br />\n";
 	$shiftAddedMsg .= "Client ID (Job Site ID): " . $shift_site_id . "<br />\n";
+	$shiftAddedMsg .= "Client SID: " . $client_sid . "<br />\n";
 
 	$shift_coverage_title = date("F j - g:i a", strtotime($shift_start_time)) .' to ' . date("g:i a", strtotime($shift_end_time));
 
@@ -196,7 +197,7 @@ function addCalendarShift($shift_record, $employee_record){
 		$shiftAddedMsg .= "<div><p>Shift Notes: <strong>" . $shift_notes . "</strong></p></div>\n";
 	}
 
-	//Shift confrmation emails
+	//Shift confirmation emails
 	//If shift is not open do not send confirmation email to client
 	if($shift_open_status == "open"){
 
@@ -216,21 +217,36 @@ function addCalendarShift($shift_record, $employee_record){
 }
 
 function addNewCalendarShifts($employee_records, $listingShiftsResult, $calendar_shift_ids, $wiw_shift_ids){
-	
+
 	//Set Counter for total Shifts updated count
 	$newShiftsCount = 0;	
 
 	//Set String for administrator message 
 	$addedShiftMsg = "";
-
-	//print_r($calendar_shift_ids);
-
 	$addedShiftMsg .= "<h4>Add New Shifts to Calendar:</h4><hr />\n";
+
+	//$addedShiftMsg .= "<h3>Employee_records:</h3>\n";
+	//$employeeRecordsArray = print_r($listingShiftsResult, true);
+	//$addedShiftMsg .= "<p>" . $employeeRecordsArray ."</p><hr />\n";
+
+	//$addedShiftMsg .= "<h3>Shifts Array:</h3>\n";
+	//$shiftsArray = print_r($listingShiftsResult, true);
+	//$addedShiftMsg .= "<p>" . $shiftsArray ."</p><hr />\n";
+
+	//$addedShiftMsg .= "<h3>Calendar Shift ID's:</h3>\n";
+	//$calendarShiftIdsArray = print_r($calendar_shift_ids, true);
+	//$addedShiftMsg .= "<p>" . $calendarShiftIdsArray ."</p><hr />\n";
+
+    $addedShiftMsg .= "<h3>When I Work Shift ID's:</h3>\n";
+	$whenIWorkShiftIdsArray = print_r($wiw_shift_ids, true);
+	$addedShiftMsg .= "<p>" . $whenIWorkShiftIdsArray ."</p><hr />\n";
+
 	foreach ($listingShiftsResult->shifts as $shift) {
-		if (!in_array($shift->id, $calendar_shift_ids)){ 
+		if (!in_array($shift->id, $calendar_shift_ids)){
 			$newShiftsCount++;
 			$employee_record =  getEmployeeByID($shift->user_id, $employee_records);
 			$addedShiftMsg .= "<strong>" . $newShiftsCount . " - Shift ID: " . $shift->id . "</strong> needs to be added to calendar.<br /><br />\n";
+			//$addedShiftMsg .= "<p>" . print_r($employee_record, true) ."</p><hr />\n";
 			$addedShiftMsg .= addCalendarShift($shift, $employee_record);
 		}
 	}
