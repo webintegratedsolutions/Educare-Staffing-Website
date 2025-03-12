@@ -66,17 +66,18 @@ function updateDeletedNewCalendarShifts() {
 	$adminMsg .=  "<h4>Current Calendar Shifts</h4>";
 	$adminMsg .=  "Calendar Shift IDs - Total Count: <strong>" . count($calendar_shift_ids) . "</strong><hr /><br />\n";
 
+    //If there are any deleted or Updated Shifts in When I Work they need to be removed first prior to a clean update
 	//Remove Deleted Shifts
 	$adminMsg .= "<h4>Remove Deleted Calendar Shifts</h4><hr />";
 	$shiftDelCount = removeCalendarShifts($wiw_shift_ids, $calendar_shift_ids);
 
+    //If there were shifts to be deleted that were removed, get the updated Calendar Shift ID's
 	if($shiftDelCount){
 		$adminMsg .= "<strong>" . $shiftDelCount . " deleted shifts were removed from the calendar.</strong><hr />\n";
 		$calendar_shift_ids = getCalendarShiftIds();
 		$adminMsg .= "<h4>Current Calendar Shifts</h4>";
 		$adminMsg .= "Calendar Shift IDs - Total Count: " . count($calendar_shift_ids) . "<br />\n";
 	} else {
-		//Get calendar shifts after removed shifts
 		$adminMsg .= "There were no deleted shifts to be removed from the calendar.";
 	}
 
@@ -84,6 +85,7 @@ function updateDeletedNewCalendarShifts() {
 	$adminMsg .= "<hr /><h4>Remove Updated Calendar Shifts</h4><hr />";
 	$updatedShiftDelCount = removeUpdatedCalendarShifts($listingShiftsResult, $calendar_shift_ids);
 
+    //If there were shifts to be updated that were removed, get the updated Calendar Shift ID's
 	if($updatedShiftDelCount){
 		$adminMsg .= "<strong>" . $updatedShiftDelCount . " updated shifts were removed from the calendar.</strong><hr />\n";
 		$calendar_shift_ids = getCalendarShiftIds();

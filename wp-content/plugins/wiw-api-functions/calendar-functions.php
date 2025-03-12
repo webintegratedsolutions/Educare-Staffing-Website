@@ -1,5 +1,6 @@
 <?php
 
+//Function to retrieve all calendar shift ID's from WordPress Storage
 function getCalendarShiftIds() {
 	//Get All Current Shifts (Tribe Event Posts)
 	$current_shifts = tribe_get_events( array(
@@ -18,6 +19,7 @@ function getCalendarShiftIds() {
    return $calendar_shift_ids;
 }
 
+//Function to retrieve all calendar shift ID's through When I Work API
 function getlistingShiftIDs($listingShiftsResult){
     if(!$listingShiftsResult){
         return NULL;
@@ -29,6 +31,7 @@ function getlistingShiftIDs($listingShiftsResult){
     return $wiw_shift_ids;
 }
 
+//Function to remove all calendar shifts from WordPress that were updated on When I Work (Prior to clean update)
 function removeUpdatedCalendarShifts($listingShiftsResult, $calendar_shift_ids){
 	$updatedShiftDelCount = 0;
 	foreach ($listingShiftsResult->shifts as $shift) {
@@ -47,6 +50,7 @@ function removeUpdatedCalendarShifts($listingShiftsResult, $calendar_shift_ids){
 	return $updatedShiftDelCount;
 }
 
+//Function to remove all calendar shifts from WordPress that were deleted When I Work
 function removeCalendarShifts($wiw_shift_ids, $calendar_shift_ids){
 	$shiftDelCount = 0;
 	foreach ($calendar_shift_ids as $shift_id){
@@ -60,6 +64,7 @@ function removeCalendarShifts($wiw_shift_ids, $calendar_shift_ids){
 	return $shiftDelCount;
 }
 
+//Function to remove a single calendar shift from WordPress storage
 function removeCalendarShift($post_shift_id){
 	//Remove shift from Current Calendar Shifts
 	if(wp_delete_post($post_shift_id, true)){
@@ -72,6 +77,7 @@ function removeCalendarShift($post_shift_id){
 	//Remove shift from Current Calendar Shifts Array
 }
 
+//Function to add a Calendar Shifts to WordPress Storage retrieved through When I Work API
 function addCalendarShift($shift_record, $employee_record){
 
 	$shiftAddedMsg = "";
@@ -216,6 +222,7 @@ function addCalendarShift($shift_record, $employee_record){
 	return $shiftAddedMsg;
 }
 
+//Function to loop through and update all Calendar Shifts to WordPress Storage
 function addNewCalendarShifts($employee_records, $listingShiftsResult, $calendar_shift_ids, $wiw_shift_ids){
 
 	//Set Counter for total Shifts updated count
@@ -237,10 +244,11 @@ function addNewCalendarShifts($employee_records, $listingShiftsResult, $calendar
 	//$calendarShiftIdsArray = print_r($calendar_shift_ids, true);
 	//$addedShiftMsg .= "<p>" . $calendarShiftIdsArray ."</p><hr />\n";
 
-    $addedShiftMsg .= "<h3>When I Work Shift ID's:</h3>\n";
-	$whenIWorkShiftIdsArray = print_r($wiw_shift_ids, true);
-	$addedShiftMsg .= "<p>" . $whenIWorkShiftIdsArray ."</p><hr />\n";
+    //$addedShiftMsg .= "<h3>When I Work Shift ID's:</h3>\n";
+	//$whenIWorkShiftIdsArray = print_r($wiw_shift_ids, true);
+	//$addedShiftMsg .= "<p>" . $whenIWorkShiftIdsArray ."</p><hr />\n";
 
+    //Prevent duplicate shifts from being entered based on Shift ID
 	foreach ($listingShiftsResult->shifts as $shift) {
 		if (!in_array($shift->id, $calendar_shift_ids)){
 			$newShiftsCount++;
@@ -325,4 +333,4 @@ function sendShiftConfirmationEmail($shift_record, $employee_record, $shiftAdded
 
 }
 
- ?>
+?>
