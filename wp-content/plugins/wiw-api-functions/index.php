@@ -22,7 +22,7 @@ global $adminMsg;
 // Get current URL
 $url = $_SERVER['REQUEST_URI'];
 
-if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/administration/') !== false ) {
+if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/administration/') !== false || defined('DOING_CRON') ) {
 
 	require("wheniwork-config.php");
 	$wiw = new Wheniwork($myLoginToken);
@@ -126,7 +126,7 @@ function updateDeletedNewCalendarShifts() {
 	//sendClientConfirmationEmails();
 
 }
-add_action( 'wiw_cron_action', 'updateDeletedNewCalendarShifts' );
+//add_action( 'wiw_cron_action', 'updateDeletedNewCalendarShifts' );
 
 
 /************************************************************************
@@ -224,7 +224,7 @@ function sendClientConfirmationEmails() {
 
 }
 
-add_action( 'wiw_cron_action_confimation_emails', 'sendClientConfirmationEmails' );
+//add_action( 'wiw_cron_action_confimation_emails', 'sendClientConfirmationEmails' );
 
 function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $employee_email, $shift_post_id, $shift_room) {
 
