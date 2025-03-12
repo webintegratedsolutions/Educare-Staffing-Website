@@ -96,9 +96,6 @@ function updateDeletedNewCalendarShifts() {
 		$adminMsg .= "There were no updated shifts to be removed from the calendar.";
 	}
 
-	//Conditions to Update Calendar Shifts
-	//If Admin, then ensure that at least 50 shifts exist in database to make updates (to ensure against bad updates based on client filters)
-	if(current_user_can('edit_pages')){
 		if(count($calendar_shift_ids)<count($listingShiftsResult->shifts)){
 
             //Get Employee (When I Work Users)
@@ -115,10 +112,9 @@ function updateDeletedNewCalendarShifts() {
 	    } else {
 		    $adminMsg .= "<p><strong>The client calendars are all up-to-date.</strong></p><hr />\n";
 	    }
-	}
 
 	//Send Admin Calendar Update Report to Webmaster by Email
-	//$adminMsg .= sendAdminCalendarUpdateReport($adminMsg);
+	$adminMsg .= sendAdminCalendarUpdateReport($adminMsg);
 
 	//Add shortcode to be used on When I Work Admin Dashboard
 	add_shortcode( 'wiw_dashboard', function(){ global $adminMsg; return $adminMsg; });
@@ -126,7 +122,7 @@ function updateDeletedNewCalendarShifts() {
 	//sendClientConfirmationEmails();
 
 }
-//add_action( 'wiw_cron_action', 'updateDeletedNewCalendarShifts' );
+add_action( 'wiw_cron_action', 'updateDeletedNewCalendarShifts' );
 
 
 /************************************************************************
@@ -268,202 +264,3 @@ function sendConfirmationMsg($shift_coverage_title, $shift_id, $employee_name, $
 	return $adminMsg;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-// // Fetch data from When I Work API
-// function fetch_when_i_work_data() {
-
-
-// 	//include When I Work API Class
-// 	require("wheniwork.php");
-
-// 	//call to When I Work API login function
-// 	$loginResult = Wheniwork::login(
-// 	"d3edc80bffb2c0299b92a1a4a2fef7422d47c325",
-// 	"nytej1@gmail.com",
-// 	"wiwPASS777!@"
-// 	);
-// 	//request When I Work shift
-// 	$myLoginToken = $loginResult->login->{'token'};
-
-
-//     $api_url = 'https://api.wheniwork.com/2/shifts?start=2024-01-01&end=2025-12-31'; // Example endpoint
-//     $api_key = 'd3edc80bffb2c0299b92a1a4a2fef7422d47c325'; // Replace with your actual API key
-
-// 	$response_login = wp_remote_get('https://api.wheniwork.com/2/login?show_pending=true', [
-// 	        'headers' => [
-// 	            'Authorization' => 'Bearer '.$myLoginToken,
-// 	            'Accept' => 'application/json',
-// 	        ],
-// 	    ]);
-// 	    $body_login = wp_remote_retrieve_body($response_login);
-// 	    $data_login = json_decode($body_login, true);
-//     $response = wp_remote_get($api_url, [
-//         'headers' => [
-//             'Authorization' => 'Bearer '.$myLoginToken,
-//             'W-UserId'=>$data_login['users'][0]['id'],
-//             'Accept' => 'application/json',
-//         ],
-//     ]);
-
-
-//     if (is_wp_error($response)) {
-//     echo 'EMPTY';
-//         return [];
-//     }
-
-//     $body = wp_remote_retrieve_body($response);
-//     $data = json_decode($body, true);
-
-//     return $data['shifts'] ?? [];
-// }
-
-// function get_or_create_venue() {
-//         // Create or get a default venue
-//         $venue_id = get_option('wiw_default_venue_id');
-
-//         if (!$venue_id) {
-//             $venue_data = array(
-//                 'post_title'    => 'Default Venue',
-//                 'post_type'     => 'tribe_venue',
-//                 'post_status'   => 'publish'
-//             );
-
-//             $venue_id = wp_insert_post($venue_data);
-//             update_option('wiw_default_venue_id', $venue_id);
-//         }
-
-//         return '95769';
-//     }
-
-//     function find_existing_event($shift_id) {
-
-//         $args = array(
-//             'post_type' => 'tribe_events',
-//             'meta_key' => 'wiw_shift_id',
-//             'meta_value' => $shift_id,
-//             'posts_per_page' => 1
-//         );
-
-//         $query = new WP_Query($args);
-
-
-//         if ($query->have_posts()) {
-//             return true;
-//         }
-
-//         return false;
-//     }
-
-
-
-//     function clear_all_caches($event_id) {
-//     // Clear The Events Calendar cache
-
-//     // Clear specific event cache
-//     clean_post_cache($event_id);
-
-//     // Clear tribe events cache
-//     delete_transient('tribe_events_calendar_widget_day_post_ids');
-//     delete_transient('tribe_events_calendar_widget_month_post_ids');
-
-//     // Clear all transients related to The Events Calendar
-//     global $wpdb;
-//     $wpdb->query(
-//         "DELETE FROM $wpdb->options
-//         WHERE option_name LIKE '%tribe_events%'
-//         AND option_name LIKE '%transient%'"
-//     );
-
-//     // Clear rewrite rules
-//     flush_rewrite_rules(false);
-
-//     // Clear object cache for this post type
-//     wp_cache_delete('latest_posts', 'tribe_events');
-//     wp_cache_delete('all_ids', 'tribe_events');
-
-//     // Force calendar update
-//     delete_transient('tribe_events_calendar_update_key');
-
-//     // Clear Tribe's cache for the month
-//     $date = new DateTime($shift['start_time']);
-//     $month_key = $date->format('Y-m');
-//     delete_transient('tribe_get_events_' . $month_key);
-
-//     // Trigger an action that The Events Calendar can hook into
-//     do_action('tribe_events_after_event_save', $event_id);
-
-//         wp_remote_get(get_site_url() . '/events/month/', array('timeout' => 0.01));
-//     wp_remote_get(get_site_url() . '/events/list/', array('timeout' => 0.01));
-//         wp_remote_get(get_site_url() . '/my-calendar', array('timeout' => 0.01));
-// }
-// // Sync When I Work data to The Events Calendar
-// function sync_when_i_work_to_events_calendar() {
-//     //echo "Fetching schedules from When I Work API...<br>";
-//     define('WP_DEBUG', true);
-// define('WP_DEBUG_LOG', true);
-//     if (!is_admin()) return;
-
-//     $args = array(
-//             'post_type' => 'tribe_events',
-//                         'meta_key' => 'wiw_shift_id',
-//             'meta_value' => '3458944389',
-//             'posts_per_page' => 1
-//         );
-
-//         $query = new WP_Query($args);
-
-
-//         if ($query->have_posts()) {
-
-//     $schedules = fetch_when_i_work_data();
-
-//    // echo 'SCHEDULES:'.$schedules;
-
-//     if (empty($schedules)) {
-//         echo "No schedules found or an error occurred.<br>";
-//         return;
-//     }
-
-//     echo "Found " . count($schedules) . " schedules.<br>";
-
-//     foreach ($schedules as $schedule) {
-//         echo "Processing schedule: " . $schedule['position']['name'] . "<br>";
-
-//          $event_data = array(
-//             'post_title'    => $schedule['position']['name'] . ' Shift',
-//             'post_content'  => $schedule['notes'],
-//             'post_status'   => 'publish',
-//             'post_type'     => 'tribe_events',
-//             'meta_input'    => array(
-//                 '_EventStartDate'    => $schedule['start_time'],
-//                 '_EventEndDate'      => $schedule['end_time'],
-//                 '_EventVenueID'      => get_or_create_venue(),
-//                 '_EventAllDay' => 'yes',
-//                 'wiw_shift_id'       => $schedule['id']
-//             )
-//         );
-
-//   $existing_event = find_existing_event($schedule['id']);
-//         echo 'EVENT: '.json_encode($event_data) . 'EXISTS:'.json_encode($existing_event);
-//         if ($existing_event) {
-//            // $event_data['ID'] = $existing_event;
-//           // wp_update_post($event_data);
-//         } else {
-//               $event_id = wp_insert_post($event_data);
-//               }
-// }
-// }
-// //    echo "Sync completed.<br>";
-// }
-
-// Run the sync function manually or on a schedule
