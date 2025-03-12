@@ -19,7 +19,8 @@ require("utility-functions.php");
 
 global $adminMsg;
 
-$url = get_current_url();
+// Get current URL
+$url = $_SERVER['REQUEST_URI'];
 
 if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/administration/') !== false ) {
 
@@ -34,12 +35,15 @@ if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/admini
 	    require("dashboard-shortcodes.php");
 	}
 
-    if ( strpos($url, '/update-calendar-shifts/') !== false  ) {
+    // Check if triggered by URL or scheduled WP-Cron event
+    if ( strpos($url, '/update-calendar-shifts/') !== false || defined('DOING_CRON') ) {
 
-	    //Require Calendar Functions
-	    require("calendar-functions.php");
-	    add_action('wp_loaded', 'updateDeletedNewCalendarShifts');
-	}
+        // Require Calendar Functions
+        require_once("calendar-functions.php");
+
+        // Run the function to update calendar shifts
+        add_action('wp_loaded', 'updateDeletedNewCalendarShifts');
+    }
 
 }
 
