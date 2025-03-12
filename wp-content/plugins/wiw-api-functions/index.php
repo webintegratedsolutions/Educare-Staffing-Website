@@ -21,21 +21,25 @@ global $adminMsg;
 
 $url = get_current_url();
 
-if ( strpos($url, '/administration/') !== false || strpos($url, '/dashboard/') !== false || strpos($url, '/test-page/') !== false || strpos($url, '/email-confirmations/') !== false  || strpos($url, '/my-shifts/') !== false) {
+if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/administration/') !== false ) {
 
 	require("wheniwork-config.php");
 	$wiw = new Wheniwork($myLoginToken);
 
-	//Require API Functions
-	require("api-functions.php");
+    //Require API Functions
+    require("api-functions.php");
 
-	//Require Calendar Functions
-	require("calendar-functions.php");
+	if ( strpos($url, '/administration/') !== false  ) {
+	    //Require Calendar Functions
+	    require("dashboard-shortcodes.php");
+	}
 
-	//Require Calendar Functions
-	require("dashboard-shortcodes.php");
+    if ( strpos($url, '/update-calendar-shifts/') !== false  ) {
 
-	add_action('wp_loaded', 'updateDeletedNewCalendarShifts');
+	    //Require Calendar Functions
+	    require("calendar-functions.php");
+	    add_action('wp_loaded', 'updateDeletedNewCalendarShifts');
+	}
 
 }
 
@@ -47,9 +51,6 @@ function updateDeletedNewCalendarShifts() {
 	global $adminMsg;
 
 	$adminMsg = "<h2>Update Calendar Shifts Report</h2><hr />\n";
-
-	//Get Employee (When I Work Users)
-	$employee_records = getlistingUsersResult();
 
 	$listingShiftsResult = getShiftsListingResult();
 
@@ -97,6 +98,10 @@ function updateDeletedNewCalendarShifts() {
 	//If Admin, then ensure that at least 50 shifts exist in database to make updates (to ensure against bad updates based on client filters)
 	if(current_user_can('edit_pages')){
 		if(count($calendar_shift_ids)<count($listingShiftsResult->shifts)){
+
+            //Get Employee (When I Work Users)
+	        $employee_records = getlistingUsersResult();
+
 		    $shiftsToBeUpdatedCount = count($listingShiftsResult->shifts)-count($calendar_shift_ids);
 		    $adminMsg .= "<p><strong>There are " . $shiftsToBeUpdatedCount . " shifts to be added to client calendars.</strong></p><hr />\n";
 		    if (ACTION_MODE===2){

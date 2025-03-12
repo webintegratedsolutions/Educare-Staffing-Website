@@ -24,7 +24,7 @@ if ( is_page( 'administrator' ) || is_page( 'administration' ) && function_exist
                 <? wp_title('') ?> - <?php echo $user->display_name ?>
             </h2>
         </div>
-		<div class="meta-page-right"><a href="/wp-admin/" class="admin-alink"><i class="fa fa-wordpress" aria-hidden="true"></i><?php echo " WordPress Dashbaord"; ?></a> | <a href="/my-profile/" class="admin-alink"><i class="um-faicon-user"></i><?php echo " My  Profile"; ?></a> | <a href="/my-calendar/" class="admin-alink"><i class="fa fa-calendar-check-o" aria-hidden="true"></i><?php echo " Calendar"; ?></a></div>
+		<div class="meta-page-right"><a href="/wp-admin/" class="admin-alink"><?php echo " WordPress Dashbaord"; ?></a> | <a href="/my-profile/" class="admin-alink"><i class="um-faicon-user"></i><?php echo " My Profile"; ?></a> | <a href="/my-calendar/" class="admin-alink"><?php echo "Calendar"; ?></a> | <a href="/update-calendar-shifts/" class="admin-alink"><?php echo "Update Calendar Shifts"; ?></a></div>
     </div>
 </div>
 <main id="primary" class="site-main">
