@@ -22,28 +22,30 @@ global $adminMsg;
 // Get current URL
 $url = $_SERVER['REQUEST_URI'];
 
-if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/administration/') !== false || defined('DOING_CRON') ) {
-
-	require("wheniwork-config.php");
-	$wiw = new Wheniwork($myLoginToken);
+if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/administration/') !== false ) {
+    require("wheniwork-config.php");
+    $wiw = new Wheniwork($myLoginToken);
 
     //Require API Functions
     require("api-functions.php");
+}
 
-	if ( strpos($url, '/administration/') !== false  ) {
+// Check if URL or is Update Calendar Shifts page or Administration page or scheduled WP-Cron event
+if ( strpos($url, '/administration/') !== false ) {
+
 	    //Require Calendar Functions
 	    require("dashboard-shortcodes.php");
-	}
+}
 
-    // Check if triggered by URL or scheduled WP-Cron event
-    if ( strpos($url, '/update-calendar-shifts/') !== false || defined('DOING_CRON') ) {
+// Check if URL or is Update Calendar Shifts page or Administration page or scheduled WP-Cron event
+if ( strpos($url, '/update-calendar-shifts/') !== false ) {
 
         // Require Calendar Functions
         require_once("calendar-functions.php");
 
         // Run the function to update calendar shifts
         add_action('wp_loaded', 'updateDeletedNewCalendarShifts');
-    }
+        //Require Calendar Functions
 
 }
 
@@ -54,19 +56,21 @@ function updateDeletedNewCalendarShifts() {
 
 	global $adminMsg;
 
+    //Begin admin messages header
 	$adminMsg = "<h2>Update Calendar Shifts Report</h2><hr />\n";
 
+    //Get calendar shifts from WordPress Storage
 	$listingShiftsResult = getShiftsListingResult();
 
-	//Get calendar shifts
+	//Get calendar shifts from WordPress Storage
 	$calendar_shift_ids = getCalendarShiftIds();
 
 	//Get When I Work API Shift ID's
 	$wiw_shift_ids = getlistingShiftIDs($listingShiftsResult);
 
+    //Add headers and details to admin messages string
 	$adminMsg .= "<h4>API Shift Result</h4>\n";
 	$adminMsg .= "When I Work Listing Shift - Total Count: <strong>" . count($listingShiftsResult->shifts) . "</strong><hr /><br />\n";
-
 	$adminMsg .=  "<h4>Current Calendar Shifts</h4>";
 	$adminMsg .=  "Calendar Shift IDs - Total Count: <strong>" . count($calendar_shift_ids) . "</strong><hr /><br />\n";
 
@@ -100,25 +104,27 @@ function updateDeletedNewCalendarShifts() {
 		$adminMsg .= "There were no updated shifts to be removed from the calendar.";
 	}
 
-		if(count($calendar_shift_ids)<count($listingShiftsResult->shifts)){
+    //If there are calendar shifts from When I Work to be added to WordPress storage
+	if(count($calendar_shift_ids)<count($listingShiftsResult->shifts)&&count($calendar_shift_ids)>0){
 
-            //Get Employee (When I Work Users)
-	        $employee_records = getlistingUsersResult();
+        //Get Employee (When I Work Users)
+	    $employee_records = getlistingUsersResult();
 
-		    $shiftsToBeUpdatedCount = count($listingShiftsResult->shifts)-count($calendar_shift_ids);
-		    $adminMsg .= "<p><strong>There are " . $shiftsToBeUpdatedCount . " shifts to be added to client calendars.</strong></p><hr />\n";
-		    if (ACTION_MODE===2){
+        //Count the difference in amount of shifts
+	    $shiftsToBeUpdatedCount = count($listingShiftsResult->shifts)-count($calendar_shift_ids);
+	    $adminMsg .= "<p><strong>There are " . $shiftsToBeUpdatedCount . " shifts to be added to client calendars.</strong></p><hr />\n";
+	    if (ACTION_MODE===2){
 
-		        } else {
-			        $adminMsg .= addNewCalendarShifts($employee_records, $listingShiftsResult, $calendar_shift_ids, $wiw_shift_ids);
-			        $adminMsg .= '<div class="admin-report"><p><small><strong>End of Update Calendar Shifts Admin Report</strong></small><p>' . "<hr /></div>\n";
-		    }
-	    } else {
-		    $adminMsg .= "<p><strong>The client calendars are all up-to-date.</strong></p><hr />\n";
-	    }
+		} else {
+		    $adminMsg .= addNewCalendarShifts($employee_records, $listingShiftsResult, $calendar_shift_ids, $wiw_shift_ids);
+		    $adminMsg .= '<div class="admin-report"><p><small><strong>End of Update Calendar Shifts Admin Report</strong></small><p>' . "<hr /></div>\n";
 
-	//Send Admin Calendar Update Report to Webmaster by Email
-	$adminMsg .= sendAdminCalendarUpdateReport($adminMsg);
+		    //If there are updates, send Admin Calendar Update Report to Webmaster by Email
+	        $adminMsg .= sendAdminCalendarUpdateReport($adminMsg);
+		}
+	} else {
+        $adminMsg .= "<p><strong>The client calendars are all up-to-date.</strong></p><hr />\n";
+	}
 
 	//Add shortcode to be used on When I Work Admin Dashboard
 	add_shortcode( 'wiw_dashboard', function(){ global $adminMsg; return $adminMsg; });
@@ -126,8 +132,6 @@ function updateDeletedNewCalendarShifts() {
 	//sendClientConfirmationEmails();
 
 }
-//add_action( 'wiw_cron_action', 'updateDeletedNewCalendarShifts' );
-
 
 /************************************************************************
 Send Confirmation Emails

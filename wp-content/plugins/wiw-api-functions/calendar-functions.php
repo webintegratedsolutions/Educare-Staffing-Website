@@ -250,7 +250,7 @@ function addNewCalendarShifts($employee_records, $listingShiftsResult, $calendar
 
     //Prevent duplicate shifts from being entered based on Shift ID
 	foreach ($listingShiftsResult->shifts as $shift) {
-		if (!in_array($shift->id, $calendar_shift_ids)){
+		if (!in_array((int) $shift->id, array_map('intval', $calendar_shift_ids), true)) {
 			$newShiftsCount++;
 			$employee_record =  getEmployeeByID($shift->user_id, $employee_records);
 			$addedShiftMsg .= "<strong>" . $newShiftsCount . " - Shift ID: " . $shift->id . "</strong> needs to be added to calendar.<br /><br />\n";
