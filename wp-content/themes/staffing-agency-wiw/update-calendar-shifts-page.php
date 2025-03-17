@@ -1,11 +1,14 @@
 <?php
-/* Template Name: Admin Page */
-/* The template for displaying all site admin pages
- *
- * This is the template that displays all pages by default.
+/* Template Name: Update Calendar Shifts Page */
+/* The template for updating calendar shifts page
  *
  * @package staffing-agency-wiw
  */
+ // Authenticate admin cron request
+if (!isset($_GET['auth_token']) || $_GET['auth_token'] !== ADMIN_CRON_SECRET) {
+    http_response_code(403);
+    die('❌ Unauthorized access');
+}
 
 get_header();
 $user = wp_get_current_user();
@@ -19,10 +22,9 @@ if ( is_page( 'administrator' ) || is_page( 'administration' ) && function_exist
     <div class="container">
         <div class="meta-page-left">
             <h2>
-                <? wp_title('') ?> - <?php echo $user->display_name ?>
+                <? wp_title('') ?>
             </h2>
         </div>
-		<div class="meta-page-right"><a href="/wp-admin/" class="admin-alink"><?php echo " WordPress Dashbaord"; ?></a> | <a href="/my-profile/" class="admin-alink"><i class="um-faicon-user"></i><?php echo " My Profile"; ?></a> | <a href="/my-calendar/" class="admin-alink"><?php echo "Calendar"; ?></a> | <a href="/update-calendar-shifts/?auth_token=T7m3bTgHq2X9@PqZ!eKc" class="admin-alink"><?php echo "Update Calendar Shifts"; ?></a></div>
     </div>
 </div>
 <main id="primary" class="site-main">

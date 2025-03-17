@@ -28,24 +28,19 @@ if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/admini
 
     //Require API Functions
     require("api-functions.php");
+
+     //Require Calendar Functions
+	 require("dashboard-shortcodes.php");
 }
 
 // Check if URL or is Update Calendar Shifts page or Administration page or scheduled WP-Cron event
-if ( strpos($url, '/administration/') !== false ) {
-
-	    //Require Calendar Functions
-	    require("dashboard-shortcodes.php");
-}
-
-// Check if URL or is Update Calendar Shifts page or Administration page or scheduled WP-Cron event
-if ( strpos($url, '/update-calendar-shifts/') !== false ) {
+if ( strpos($url, '/update-calendar-shifts/') !== false) {
 
         // Require Calendar Functions
         require_once("calendar-functions.php");
 
         // Run the function to update calendar shifts
         add_action('wp_loaded', 'updateDeletedNewCalendarShifts');
-        //Require Calendar Functions
 
 }
 
@@ -53,6 +48,11 @@ if ( strpos($url, '/update-calendar-shifts/') !== false ) {
 Update Deleted and New Calendar Shifts from When I Work API
 ************************************************************************/
 function updateDeletedNewCalendarShifts() {
+
+    if (!current_user_can('manage_options')) {
+        // The user is an admin
+        loginAutobot();
+    }
 
 	global $adminMsg;
 
@@ -118,16 +118,18 @@ function updateDeletedNewCalendarShifts() {
 		} else {
 		    $adminMsg .= addNewCalendarShifts($employee_records, $listingShiftsResult, $calendar_shift_ids, $wiw_shift_ids);
 		    $adminMsg .= '<div class="admin-report"><p><small><strong>End of Update Calendar Shifts Admin Report</strong></small><p>' . "<hr /></div>\n";
-
-		    //If there are updates, send Admin Calendar Update Report to Webmaster by Email
-	        $adminMsg .= sendAdminCalendarUpdateReport($adminMsg);
 		}
 	} else {
-        $adminMsg .= "<p><strong>The client calendars are all up-to-date.</strong></p><hr />\n";
+        	$adminMsg .= "<p><strong>The client calendars are all up-to-date.</strong></p><hr />\n";
 	}
+
+	//If there are updates, send Admin Calendar Update Report to Webmaster by Email
+	$adminMsg .= sendAdminCalendarUpdateReport($adminMsg);
 
 	//Add shortcode to be used on When I Work Admin Dashboard
 	add_shortcode( 'wiw_dashboard', function(){ global $adminMsg; return $adminMsg; });
+
+    logoutAutobot();
 
 	//sendClientConfirmationEmails();
 

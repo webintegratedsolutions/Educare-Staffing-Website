@@ -358,33 +358,3 @@ if (strpos($_SERVER['REQUEST_URI'], '/administration/') !== false) {
 add_action('wp_loaded', 'remove_extra_logs');
 */
 
-/*Schedule a Cron Job to Load the WIW API Functions Plugin Periodically (To keep the calendar updated)
-// Step 1: Define a custom cron interval (every 15 minutes)
-function custom_cron_intervals($schedules) {
-    $schedules['every_fifteen_minutes'] = array(
-        'interval' => 900, // 900 seconds = 15 minutes
-        'display'  => __('Every 15 Minutes')
-    );
-    return $schedules;
-}
-add_filter('cron_schedules', 'custom_cron_intervals');
-
-// Step 2: Schedule the cron job if it's not already scheduled
-function schedule_plugin_activation() {
-    if (!wp_next_scheduled('custom_plugin_activation_event')) {
-        wp_schedule_event(time(), 'every_fifteen_minutes', 'custom_plugin_activation_event');
-    }
-}
-add_action('wp', 'schedule_plugin_activation');
-
-// Step 3: Define the function to activate the plugin
-function activate_wiw_plugin() {
-    $plugin_path = 'wiw-api-functions/index.php'; // Path to your plugin
-
-    // Check if the plugin is inactive and activate it
-    if (!is_plugin_active($plugin_path)) {
-        activate_plugin($plugin_path);
-    }
-}
-add_action('custom_plugin_activation_event', 'activate_wiw_plugin');
-*/

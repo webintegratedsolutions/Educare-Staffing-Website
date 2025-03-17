@@ -70,7 +70,7 @@ function loginAutobot(){
 		//get user's ID
 		$user = get_user_by('login', $loginusername);
 		   $user_id = $user->ID;
-	
+
 		//login
 		wp_set_current_user($user_id, $loginusername);
 		wp_set_auth_cookie($user_id);
@@ -80,20 +80,15 @@ function loginAutobot(){
 }
 
 function logoutAutobot(){
-	//Login wiw_autobot as administrative user to make calendar updates.
-	//If not, certain aspects of update, such as category ID's will not be entered.
-	$loginusername = 'wiw_autobot';
-	if (is_user_logged_in()) {
-		//get user's ID
-		$user = get_user_by('login', $loginusername);
-		   $user_id = $user->ID;
-	
-		//login
-		wp_set_current_user($user_id, $loginusername);
-		wp_set_auth_cookie($user_id);
-		do_action('wp_logout', $loginusername);
-	}
-	return $loginusername;
+    $checkuser = get_user_by('email', 'wiw_autobot@educarestaffing.ca');
+    if ($checkuser && get_current_user_id() == $checkuser->ID) {
+        echo "✅ WIW Autobot logged in!";
+        wp_destroy_current_session();
+        wp_clear_auth_cookie();
+        wp_set_current_user(0);
+    } else {
+        echo "❌ WIW Autobot is not logged in!";
+    }
 }
 
 ?>
