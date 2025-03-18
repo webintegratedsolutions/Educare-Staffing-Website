@@ -41,7 +41,6 @@ if ( strpos($url, '/update-calendar-shifts/') !== false) {
 
         // Run the function to update calendar shifts
         add_action('wp_loaded', 'updateDeletedNewCalendarShifts');
-
 }
 
 /************************************************************************
@@ -49,11 +48,13 @@ Update Deleted and New Calendar Shifts from When I Work API
 ************************************************************************/
 function updateDeletedNewCalendarShifts() {
 
+    //If user is not an admin then login When I Work Autobot
     if (!current_user_can('manage_options')) {
         // The user is an admin
         loginAutobot();
     }
 
+    //set Global admin message var
 	global $adminMsg;
 
     //Begin admin messages header
@@ -129,6 +130,7 @@ function updateDeletedNewCalendarShifts() {
 	//Add shortcode to be used on When I Work Admin Dashboard
 	add_shortcode( 'wiw_dashboard', function(){ global $adminMsg; return $adminMsg; });
 
+    //if wiw_autobot is logged in then log out
     logoutAutobot();
 
 	//sendClientConfirmationEmails();
