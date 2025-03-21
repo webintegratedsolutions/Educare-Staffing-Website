@@ -326,7 +326,17 @@ function tribe_exclude_events_categories_all_views( $query ) {
 	if ( !is_page( 'dashboard' ) && !current_user_can( 'manage_options' ) ) {
 		if ($query->query_vars['post_type'] == Tribe__Events__Main::POSTTYPE && ! is_singular( 'tribe_events' ) && ! is_tax( Tribe__Events__Main::TAXONOMY ) ) {
 			{
-				$user_id = get_current_user_id();
+
+                if ( is_user_logged_in() ) {
+                    // your code for logged in user 
+                    $user_id = get_current_user_id();
+                 } else {
+                    // your code for logged out user 
+                    $user_id = 39;
+                 }
+                 
+                 echo "User ID: " . $user_id;
+
 				  $key = 'client_account_number';
 				  $single = true;
 
