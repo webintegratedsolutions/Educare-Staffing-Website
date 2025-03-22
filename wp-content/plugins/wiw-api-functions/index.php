@@ -106,7 +106,8 @@ function updateDeletedNewCalendarShifts() {
 	}
 
     //If there are calendar shifts from When I Work to be added to WordPress storage
-	if(count($calendar_shift_ids)<count($listingShiftsResult->shifts)&&count($calendar_shift_ids)>0){
+    //Greater than 60 is a buffer to ensure that client IDs are loading. There should never be less than 60 shifts on average around 150.
+	if(count($calendar_shift_ids)<count($listingShiftsResult->shifts)&&count($calendar_shift_ids)>60){
 
         //Get Employee (When I Work Users)
 	    $employee_records = getlistingUsersResult();

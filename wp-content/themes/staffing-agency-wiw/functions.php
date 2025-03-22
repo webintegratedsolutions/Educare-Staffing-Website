@@ -357,6 +357,16 @@ function tribe_exclude_events_categories_all_views( $query ) {
 	}
 }
 
+add_filter( 'single_template', function ( $template ) {
+    global $post;
+
+    if ( is_singular( 'tribe_events' ) ) {
+        $custom = locate_template( 'single-tribe_events.php' );
+        if ( $custom ) return $custom;
+    }
+
+    return $template;
+});
 /*
 //Strange function found which was blanking out the administration page
 function remove_extra_logs() {
