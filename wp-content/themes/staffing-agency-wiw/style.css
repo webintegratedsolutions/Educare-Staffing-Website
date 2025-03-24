@@ -1998,6 +1998,10 @@ input.wpcf7-submit:hover {
 	padding-bottom: 20px;
 }
 
+.um-account-profile-link {
+  display:none !important
+}
+
 /* Small devices (landscape phones, 600px and below)*/
 @media (max-width: 600px) {
   .wp-block-media-text__media img {

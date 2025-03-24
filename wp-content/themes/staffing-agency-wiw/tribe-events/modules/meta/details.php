@@ -91,13 +91,19 @@ $website_title = tribe_events_get_event_website_title();
 	<dd>
 		<abbr class="tribe-events-abbr tribe-events-start-date published dtstart" title="<?php echo esc_attr( $additional_data['employee_name'] ); ?>"> <?php echo esc_html( $additional_data['employee_name'] ); ?> </abbr>
 	</dd>
-	<dt class="tribe-events-start-date-label"> <?php esc_html_e( 'Employee:', 'the-events-calendar' ); ?> </dt>
+	<dt class="tribe-events-start-date-label"> <?php esc_html_e( 'Position:', 'the-events-calendar' ); ?> </dt>
 	<dd>
 		<abbr class="tribe-events-abbr tribe-events-start-date published dtstart" title="<?php echo esc_attr( $additional_data['shift_position'] ); ?>"> <?php echo esc_html( $additional_data['shift_position'] ); ?> </abbr>
 	</dd>
 <? } else { ?>
+	<dt class="tribe-events-start-date-label"> <?php esc_html_e( 'Status:', 'the-events-calendar' ); ?> </dt>
+	<dd>
 	<div class="tribe-events-open-alert">Open Shift</div>
-	<div class="tribe-events-calendar-month__calendar-event-tooltip-view-school"><?php echo $additional_data['shift_room']; ?></div>
+	</dd>
+	<dt class="tribe-events-start-date-label"> <?php esc_html_e( 'Room:', 'the-events-calendar' ); ?> </dt>
+	<dd>
+		<abbr class="tribe-events-abbr tribe-events-start-date published dtstart" title="<?php echo esc_attr( $additional_data['shift_room'] ); ?>"> <?php echo esc_html( $additional_data['shift_room'] ); ?> </abbr>
+	</dd>
 <? } ?>
 
 		<?php
