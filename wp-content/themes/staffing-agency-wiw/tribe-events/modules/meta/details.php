@@ -51,6 +51,22 @@ $time_formatted = apply_filters( 'tribe_events_single_event_time_formatted', $ti
  * @var string Time title
  * @var int Event post id
  */
+
+//Get the current global post
+global $post;
+
+$shift_meta_shift_id = get_post_meta( $post->ID, 'Shift ID' );
+$shift_meta_employee_name = get_post_meta( $post->ID, 'Employee Name' );
+$shift_meta_position = get_post_meta( $post->ID, 'Shift Position' );
+$shift_meta_shift_room = get_post_meta( $post->ID, 'Shift Room' );
+$shift_meta_shift_status = get_post_meta( $post->ID, 'Shift Status' );
+		 
+$additional_data = array();
+$additional_data['shift_id'] = $shift_meta_shift_id[0];
+$additional_data['employee_name'] = $shift_meta_employee_name[0];
+$additional_data['shift_position'] = $shift_meta_position[0];
+$additional_data['shift_room'] = $shift_meta_shift_room[0];
+$additional_data['shift_status'] = $shift_meta_shift_status[0];
 $time_title = apply_filters( 'tribe_events_single_event_time_title', __( 'Time:', 'the-events-calendar' ), $event_id );
 
 $cost    = tribe_get_formatted_cost();
@@ -59,31 +75,30 @@ $website_title = tribe_events_get_event_website_title();
 ?>
 
 <div class="tribe-events-meta-group tribe-events-meta-group-details">
-	<h2 class="tribe-events-single-section-title"> <?php esc_html_e( 'Details', 'the-events-calendar' ); ?> </h2>
+	<h2 class="tribe-events-single-section-title"> <?php esc_html_e( 'Details', 'the-events-calendar' ); ?> </h2><br />
 	<dl>
-
 		<?php
 		do_action( 'tribe_events_single_meta_details_section_start' );
-
 		// Single day events
-
 			?>
 
-			<dt class="tribe-events-start-date-label"> <?php esc_html_e( 'Date:', 'the-events-calendar' ); ?> </dt>
-			<dd>
-				<abbr class="tribe-events-abbr tribe-events-start-date published dtstart" title="<?php echo esc_attr( $start_ts ); ?>"> <?php echo esc_html( $start_date ); ?> </abbr>
-			</dd>
-
-			<dt class="tribe-events-start-time-label"> <?php echo esc_html( $time_title ); ?> </dt>
-			<dd>
-				<div class="tribe-events-abbr tribe-events-start-time published dtstart" title="<?php echo esc_attr( $end_ts ); ?>">
-					<?php echo $time_formatted; ?>
-					<?php if ( $show_time_zone ) : ?>
-						<span class="tribe-events-abbr tribe-events-time-zone published "><?php echo esc_html( $time_zone_label ); ?></span>
-					<?php endif; ?>
-				</div>
-			</dd>
-
+<? if ($additional_data['shift_status']=="closed") { ?>
+	<dt class="tribe-events-start-date-label"> <?php esc_html_e( 'Room:', 'the-events-calendar' ); ?> </dt>
+	<dd>
+		<abbr class="tribe-events-abbr tribe-events-start-date published dtstart" title="<?php echo esc_attr( $additional_data['shift_room'] ); ?>"> <?php echo esc_html( $additional_data['shift_room'] ); ?> </abbr>
+	</dd>
+	<dt class="tribe-events-start-date-label"> <?php esc_html_e( 'Employee:', 'the-events-calendar' ); ?> </dt>
+	<dd>
+		<abbr class="tribe-events-abbr tribe-events-start-date published dtstart" title="<?php echo esc_attr( $additional_data['employee_name'] ); ?>"> <?php echo esc_html( $additional_data['employee_name'] ); ?> </abbr>
+	</dd>
+	<dt class="tribe-events-start-date-label"> <?php esc_html_e( 'Employee:', 'the-events-calendar' ); ?> </dt>
+	<dd>
+		<abbr class="tribe-events-abbr tribe-events-start-date published dtstart" title="<?php echo esc_attr( $additional_data['shift_position'] ); ?>"> <?php echo esc_html( $additional_data['shift_position'] ); ?> </abbr>
+	</dd>
+<? } else { ?>
+	<div class="tribe-events-open-alert">Open Shift</div>
+	<div class="tribe-events-calendar-month__calendar-event-tooltip-view-school"><?php echo $additional_data['shift_room']; ?></div>
+<? } ?>
 
 		<?php
 		/**
