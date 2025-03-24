@@ -35,12 +35,14 @@ if ( strpos($url, '/update-calendar-shifts/') !== false || strpos($url, '/admini
 
 // Check if URL or is Update Calendar Shifts page or Administration page or scheduled WP-Cron event
 if ( strpos($url, '/update-calendar-shifts/') !== false) {
-
+	if (!isset($_GET['auth_token']) || $_GET['auth_token'] !== ADMIN_CRON_SECRET) {
+		die('❌ Unauthorized access');
+	} else {
         // Require Calendar Functions
         require_once("calendar-functions.php");
-
         // Run the function to update calendar shifts
         add_action('wp_loaded', 'updateDeletedNewCalendarShifts');
+	}
 }
 
 /************************************************************************

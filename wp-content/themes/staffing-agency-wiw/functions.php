@@ -335,7 +335,7 @@ function tribe_exclude_events_categories_all_views( $query ) {
                     $user_id = 39;
                  }
                  
-                 echo "User ID: " . $user_id;
+                 //echo "User ID: " . $user_id;
 
 				  $key = 'client_account_number';
 				  $single = true;
